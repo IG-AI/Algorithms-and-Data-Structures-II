@@ -19,18 +19,30 @@ def birthday_present(P, n, t):
     '''
     # Initialize the dynamic programming matrix, A
     # Type: Boolean[0..n][0..t]
+    global A    
     A = [[None for i in range(t + 1)] for j in range(n + 1)]
+    return birthday_present_aux(P, n, t)
 
+
+def birthday_present_aux(P, n, t):
     if (n == 0) and (t == 0):
         return True
     if (n == 0):
         return False
-    elif t == 0:
+    elif (t == 0):
         return True
-    elif P[n-1] > t:
-        return birthday_present(P, n-1, t)
+    elif (P[n-1] > t):
+        if A[n][t] == None:
+            A[n][t] = t
+            return birthday_present_aux(P, n-1, t)
+        else:
+            return A[t][n]
     else:
-        return birthday_present(P,n-1,t) or birthday_present(P,n-1,t-P[n-1])
+        if A[n][t] == None:
+            A[n][t] = t
+            return birthday_present_aux(P, n-1, t) or birthday_present_aux(P,n-1,t-P[n-1])
+        else:
+            return A[n][t]
 
 
 def birthday_present_subset(P, n, t):
