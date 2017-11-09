@@ -18,7 +18,7 @@ def birthday_present_aux(P, n, t):
     if (n == 0):
         return False
     elif (t == 0):
-        return True
+        return false
     elif (P[n-1] > t):
         if A[n][t] == None:
             A[n][t] = t
