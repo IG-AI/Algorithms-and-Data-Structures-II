@@ -19,30 +19,34 @@ def birthday_present(P, n, t):
     '''
     # Initialize the dynamic programming matrix, A
     # Type: Boolean[0..n][0..t]
-    global A    
+    global A
+    global B
     A = [[None for i in range(t + 1)] for j in range(n + 1)]
+    B = [None for i in range(t+1)]
     return birthday_present_aux(P, n, t)
 
 
 def birthday_present_aux(P, n, t):
     if (n == 0) and (t == 0):
-        return True
+        A[n-1][t] = True
+        return A[n-1][t]
     if (n == 0):
         return False
-    elif (t == 0):
-        return True
-    elif (P[n-1] > t):
-        if A[n][t] == None:
-            A[n][t] = t
-            return birthday_present_aux(P, n-1, t)
-        else:
-            return A[t][n]
+    elif t == 0:
+        A[n-1][t] = True
+        return A[t][n-1]
+    elif P[n-1] > t:
+      if A[n-1][t] is None:
+         A[n-1][t] = birthday_present_aux(P, n-1, t)
+      return A[n-1][t]
     else:
-        if A[n][t] == None:
-            A[n][t] = t
-            return birthday_present_aux(P, n-1, t) or birthday_present_aux(P,n-1,t-P[n-1])
-        else:
-            return A[n][t]
+      if A[n-1][t] is None:
+         A[n-1][t] = birthday_present_aux(P, n-1, t)
+      if A[n-1][t-P[n-1]] is None:
+         A[n-1][t-P[n-1]] = birthday_present_aux(P,n-1,t-P[n-1])
+      if A[n-1][t-P[n-1]] == True:
+         B[t-P[n-1]] = P[n-1]
+    return A[n-1][t] or A[n-1][t-P[n-1]]
 
 
 def birthday_present_subset(P, n, t):
@@ -54,6 +58,14 @@ def birthday_present_subset(P, n, t):
              birthday_present_subset(P, len(P), 299) = [56, 7, 234, 2]
              birthday_present_subset(P, len(P), 11) = []
     '''
+    if birthday_present(P, n, t) == False:
+        return []
+    else:
+        C = filter(None, B)
+        print C
+        return C
+        
+
 
 class BirthdayPresentTest(unittest.TestCase):
     """Test Suite for birthday present problem
