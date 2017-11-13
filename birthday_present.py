@@ -3,8 +3,8 @@
 '''
 Assignment 1: Birthday Present
 
-Team Number: 
-Student Names: 
+Team Number: 13
+Student Names: Daniel Ågstrand, Linnea Andersson
 '''
 import unittest
 
@@ -54,11 +54,27 @@ def birthday_present_subset(P, n, t):
              birthday_present_subset(P, len(P), 299) = [56, 7, 234, 2]
              birthday_present_subset(P, len(P), 11) = []
     '''
-    if birthday_present(P, n, t) == False:
-        return [0]
-    else:
-        return [1]
-        
+    R = []
+
+    for i in range(t+1):
+    	for j in range(n+1):
+    	 if i == 0 and j == 0:
+    		A[j][i] = True
+    	 elif i == 0:
+    		A[j][i] = True
+    	 elif j == 0:
+    		A[j][i] = False
+    	 elif P[j-1] > i:
+    		A[j][i] = A[j-1][i]
+    	 else:
+    		A[j][i] = A[j-1][i] or A[j-1][i-P[j-1]]
+    while True:
+      i = 0
+      while A[i][t - sum(R)] == False:
+    	i = i + 1
+      R.append(P[i-1])
+      if t == sum(R):
+        return R
 
 
 class BirthdayPresentTest(unittest.TestCase):

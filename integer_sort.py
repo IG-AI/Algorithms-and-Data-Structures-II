@@ -3,8 +3,8 @@
 '''
 Assignment 1: Integer Sort
 
-Team Number: 
-Student Names: 
+Team Number: 13
+Student Names: Daniel Ågstrand, Linnea Andersson
 '''
 import unittest
 
@@ -16,6 +16,23 @@ def integer_sort(A, k):
     Example: integer_sort([5, 3, 6, 7, 12, 3, 6, 1, 4, 7]), 12) = 
                  [1, 3, 3, 4, 5, 6, 6, 7, 7, 12]
     '''
+    Y = ([0] * (k+1))
+
+    for i in range(len(A)):
+        for x in range(len(Y)):
+            if A[i] == x:
+                Y[x] = Y[x] + 1
+               
+    i = 0
+    for x in range(len(Y)):
+       for t in range(len(A)):
+           if Y[x] == t and t>0:
+                for j in range(t):
+                    A[i] = x
+                    i = i + 1
+
+    return A
+
 
 class IntegerSortTest(unittest.TestCase):
     """Test Suite for integer sort problem
