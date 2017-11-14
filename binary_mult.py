@@ -51,9 +51,14 @@ def half_adder(A,B):
         return list(reversed(C))
     else:
         return -1
- 
 
 def binary_mult(A,B):
+    global C
+    C = [0] * (2*len(A))
+    return binary_mult_aux(A,B)
+ 
+
+def binary_mult_aux(A,B):
     """
     Sig:    int[0..n-1], int[0..n-1] ==> int[0..2*n-1]
     Pre:    
@@ -61,38 +66,37 @@ def binary_mult(A,B):
     Var:    
     Example:    binary_mult([0,1,1],[1,0,0]) = [0,0,1,1,0,0]
     """
-    global i
     n = len(A)
+    C = [0] * (2*n)
     if len(A) == len(B):
         if n == 1:
-            return [0,(A[0] * B[0])] 
+            return [A[0] * B[0]] 
         else:
             a1 = A[0:n/2]
-            b1 = A[0:n/2]
+            b1 = B[0:n/2]
             a2 = A[n/2:n]
-            b2 = A[n/2:n]
+            b2 = B[n/2:n]
 
             #print 'a1 = ', format(a1)
             #print 'a2 = ', format(a2)
             #print 'b1 = ', format(b1)
             #print 'b2 = ', format(b2)
 
-            x1 = binary_mult(a2,b2)
-            x2 = binary_mult(a2,b1)
-            x3 = binary_mult(a1,b2)
-            x4 = binary_mult(a1,b1)
+            x1 = binary_mult(a1,b2)
+            x2 = binary_mult(a1,b1)
+            x3 = binary_mult(a2,b2)
+            x4 = binary_mult(a2,b2)
 
-            x2 = half_adder(x2,x3)
-            x1 = shift_left(x1, n)
-            x2 = shift_right(x2, n/2)
+             
+
+          #  x2 = half_adder(x2,x3)
+           # x1 = shift_left(x1, n)
+           # x2 = shift_right(x2, n/2)
          
-        temp = half_adder(x1, x2)
-        temp = half_adder(temp, x4)
+        #temp = half_adder(x1, x2)
+        #temp = half_adder(temp, x4)
 
-        #print temp
-        for i in range(n):
-            temp = [0] + temp
-        return temp
+        return x1 + x2 + x3 + x4
     else:
         return -1
     
