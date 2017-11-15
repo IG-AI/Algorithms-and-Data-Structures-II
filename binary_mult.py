@@ -69,9 +69,9 @@ def full_adder(A, B):
 
 def binary_mult(A, B):
     if len(A) == 1 and len(B) == 1:
-        return [A*B]
+        return [A[0]*B[0]]
 
-    orglen = min(len(A), len(B))
+    orglen = max(len(A), len(B))
     if len(A) != len(B):
         t = abs(len(A) - len(B))
         if len(A) > len(B):
@@ -102,7 +102,7 @@ def binary_mult(A, B):
         for i in range(n):
             temp.remove(0)
     else:
-        if len(temp) != orglen:
+        if len(temp) != orglen * 2:
             n = abs(len(temp) - orglen * 2)
             for i in range(n):
                 temp.insert(0, 0)
@@ -195,6 +195,10 @@ class BinaryMultTest(unittest.TestCase):
         B = [1, 1, 0]
         answer = binary_mult(A, B)
         self.assertEqual(answer, [0, 0, 1, 0, 0, 1, 0, 0])
+        A = [1]
+        B = [1]
+        answer = binary_mult(A, B)
+        self.assertEqual(answer, [1])
 
 
 if __name__ == '__main__':
