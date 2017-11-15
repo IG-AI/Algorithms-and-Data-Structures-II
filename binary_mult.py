@@ -9,54 +9,72 @@ Student Names: Daniel Ågstrand, Linnea Andersson
 import unittest
 
 def shift_left(l, n):
-    return l[n:]+l[:n]
-
-
-def shift_right(l, n):
-    if len(l) == 1:
-        return [0]
-    for i in range(len(l)-1):
-        l[i+1] = l[i]
-    for j in range(n):
-        l[j] = 0
+    for i in range(n):
+        l.append(0)
     return l
 
 
-def half_adder(A,B):
-    C = [0] * len(A)
+def shift_right(l, n):
+    for i in range(n):
+        l.insert(0,0)
+    return l
+
+
+def full_adder(A,B):
     Carry = 0
-    A = list(reversed(A))
-    B = list(reversed(B))
-    if len(A) == len(B):
-        for i in range(len(A)):
-            if A[i] == B[i] and Carry == 0:
-                if A[i] == 0:
-                    C[i] = 0
+    if len(A) != len(B):
+        n = abs(len(A) - len(B))
+        if n > 0:
+            if len(A) > len(B):
+                for i in range(n):
+                    B.insert(0,0)
+            else:
+                for i in range(n):
+                    A.insert(0,0)
+                    
+    C = [0] * len(A)
+    for i in range(len(A)):
+        if i == (len(A) - 1) and (A[-i-1] == 1 and B[-i-1] == 1 and Carry == 1):
+            C[-i-1] = 1
+            C.insert(0,1)
+        elif i == (len(A) - 1) and (A[-i-1] != B[-i-1] and Carry == 1):
+            C[-i-1] = 0
+            C.insert(0,1)
+        elif i == (len(A) - 1) and (A[-i-1] == 1 and B[-i-1] == 1 and Carry == 0):
+            C[-i-1] = 0
+            C.insert(0,1)
+            
+        else:
+            if A[-i-1] == B[-i-1] and Carry == 0:
+                if A[-i-1] == 0:
+                    C[-i-1] = 0
                 else:
-                    C[i] = 0
+                    C[-i-1] = 0
                     Carry = 1
-            elif A[i] == B[i]:
-                if A[i] == 1:
-                    C[i] = 1
+            elif A[-i-1] == B[-i-1]:
+                if A[-i-1] == 1:
+                    C[-i-1] = 1
                     Carry = 1
                 else:
-                    C[i] = 1
+                    C[-i-1] = 1
                     Carry = 0
             else:
                 if Carry == 1:
-                    C[i] = 0
+                    C[-i-1] = 0
                 else:
-                    C[i] = 1
+                    C[-i-1] = 1
                     Carry = 0
-        return list(reversed(C))
-    else:
-        return -1
+    return C
+
 
 def binary_mult(A,B):
-    global C
-    C = [0] * (2*len(A))
-    return binary_mult_aux(A,B)
- 
+    temp = binary_mult_aux(A,B)
+    if len(temp) != len(A):
+        n = abs(len(temp) - len(A*2))
+        for i in range(n):
+            temp.insert(0,0)
+    return temp
+
 
 def binary_mult_aux(A,B):
     """
@@ -66,40 +84,61 @@ def binary_mult_aux(A,B):
     Var:    
     Example:    binary_mult([0,1,1],[1,0,0]) = [0,0,1,1,0,0]
     """
-    n = len(A)
-    C = [0] * (2*n)
-    if len(A) == len(B):
-        if n == 1:
-            return [A[0] * B[0]] 
-        else:
-            a1 = A[0:n/2]
-            b1 = B[0:n/2]
-            a2 = A[n/2:n]
-            b2 = B[n/2:n]
-
-            #print 'a1 = ', format(a1)
-            #print 'a2 = ', format(a2)
-            #print 'b1 = ', format(b1)
-            #print 'b2 = ', format(b2)
-
-            x1 = binary_mult(a1,b2)
-            x2 = binary_mult(a1,b1)
-            x3 = binary_mult(a2,b2)
-            x4 = binary_mult(a2,b2)
-
-             
-
-          #  x2 = half_adder(x2,x3)
-           # x1 = shift_left(x1, n)
-           # x2 = shift_right(x2, n/2)
-         
-        #temp = half_adder(x1, x2)
-        #temp = half_adder(temp, x4)
-
-        return x1 + x2 + x3 + x4
-    else:
-        return -1
     
+    if len(A) != len(B):
+        t = abs(len(A) - len(B))
+        if len(A) > len(B):
+            for i in range(t):
+                B.insert(0,0)
+        else:
+            for i in range(t):
+                A.insert(0,0)
+                
+    n = len(A)
+    if n == 1:
+        return [A[0] * B[0]] 
+    else:
+        m = n - n/2
+
+        print 'A = ', format(A)
+        print 'B = ', format(B)
+
+        a = A[:n/2]
+        b = A[n/2:n]
+        c = B[:n/2]
+        d = B[n/2:n]
+
+        print 'a = ', format(a)
+        print 'b = ', format(b)
+        print 'c = ', format(c)
+        print 'd = ', format(d)
+
+        e = binary_mult_aux(a,c)
+        f = binary_mult_aux(b,d)
+        g = binary_mult_aux(b,c)
+        h = binary_mult_aux(a,d)
+                        
+        print 'e = ', format(e)
+        print 'f = ', format(f)
+        print 'g = ', format(g)
+        print 'h = ', format(h)
+
+        t1 = shift_left(e, n)
+        t2 = full_adder(g,h)
+        t3 = shift_left(t2, m)
+        t4 = full_adder(t1, t3)
+
+        print 't1 = ', format(t1)
+        print 't2 = ', format(t2)
+        print 't3 = ', format(t3)
+        print 't4 = ', format(t4)
+                        
+        final = full_adder(t4, f)
+        
+        print 'final = ', format(final)
+
+    return final
+            
     
 class BinaryMultTest(unittest.TestCase):
     """Test Suite for binary multiplication problem
@@ -116,8 +155,9 @@ class BinaryMultTest(unittest.TestCase):
         This is a simple sanity check for your function;
         passing is not a guarantee of correctness.
         """
-        A = [0,1,1,0]
-        B = [0,0,1,0]
+        
+        A = [1,0,1]
+        B = [1,1,1]
         answer = binary_mult(A, B)
         self.assertEqual(answer, [0,0,0,0,1,1,0,0])
 

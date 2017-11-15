@@ -16,20 +16,26 @@ def integer_sort(A, k):
     Example: integer_sort([5, 3, 6, 7, 12, 3, 6, 1, 4, 7]), 12) = 
                  [1, 3, 3, 4, 5, 6, 6, 7, 7, 12]
     '''
-    Y = ([0] * (k+1))
+    Y = ([0] * k)
 
     for i in range(len(A)):
         for x in range(len(Y)):
             if A[i] == x:
                 Y[x] = Y[x] + 1
                
-    i = 0
+                
+
     for x in range(len(Y)):
-       for t in range(len(A)):
-           if Y[x] == t and t>0:
+        print(x)
+        for t in range(len(A)):
+            if Y[x] == t and t>0:
                 for j in range(t):
-                    A[i] = x
-                    i = i + 1
+                    A[j] = x
+                        
+            else:
+                print(A)
+                        
+
 
     return A
 
@@ -50,7 +56,7 @@ class IntegerSortTest(unittest.TestCase):
         passing is not a guarantee of correctness.
         """
         A = [5, 3, 6, 7, 12, 3, 6, 1, 4, 7]
-        R = integer_sort(A, 12)
+        R = integer_sort(A, 6)
         self.assertEqual(R, [1, 3, 3, 4, 5, 6, 6, 7, 7, 12])
 
 if __name__ == '__main__':
