@@ -22,7 +22,7 @@ def shift_right(l, n):
 
 
 def full_adder(A, B):
-    Carry = 0
+    carry = 0
     if len(A) != len(B):
         n = abs(len(A) - len(B))
         if n > 0:
@@ -35,35 +35,35 @@ def full_adder(A, B):
 
     C = [0] * len(A)
     for i in range(len(A)):
-        if i == (len(A) - 1) and (A[-i - 1] == 1 and B[-i - 1] == 1 and Carry == 1):
+        if i == (len(A) - 1) and (A[-i - 1] == 1 and B[-i - 1] == 1 and carry == 1):
             C[-i - 1] = 1
             C.insert(0, 1)
-        elif i == (len(A) - 1) and (A[-i - 1] != B[-i - 1] and Carry == 1):
+        elif i == (len(A) - 1) and (A[-i - 1] != B[-i - 1] and carry == 1):
             C[-i - 1] = 0
             C.insert(0, 1)
-        elif i == (len(A) - 1) and (A[-i - 1] == 1 and B[-i - 1] == 1 and Carry == 0):
+        elif i == (len(A) - 1) and (A[-i - 1] == 1 and B[-i - 1] == 1 and carry == 0):
             C[-i - 1] = 0
             C.insert(0, 1)
         else:
-            if A[-i - 1] == B[-i - 1] and Carry == 0:
+            if A[-i - 1] == B[-i - 1] and carry == 0:
                 if A[-i - 1] == 0:
                     C[-i - 1] = 0
                 else:
                     C[-i - 1] = 0
-                    Carry = 1
+                    carry = 1
             elif A[-i - 1] == B[-i - 1]:
                 if A[-i - 1] == 1:
                     C[-i - 1] = 1
-                    Carry = 1
+                    carry = 1
                 else:
                     C[-i - 1] = 1
-                    Carry = 0
+                    carry = 0
             else:
-                if Carry == 1:
+                if carry == 1:
                     C[-i - 1] = 0
                 else:
                     C[-i - 1] = 1
-                    Carry = 0
+                    carry = 0
     return C
 
 
@@ -123,46 +123,22 @@ def binary_mult_aux(A, B):
     else:
         m = n - n / 2
 
-        """
-        print 'A = ', format(A)
-        print 'B = ', format(B)"""
+        ah = A[:n / 2]
+        al = A[n / 2:n]
+        bh = B[:n / 2]
+        bl = B[n / 2:n]
 
-        a = A[:n / 2]
-        b = A[n / 2:n]
-        c = B[:n / 2]
-        d = B[n / 2:n]
+        x1 = binary_mult_aux(ah, bh)
+        x2 = binary_mult_aux(al, bl)
+        x3 = binary_mult_aux(al, bh)
+        x4 = binary_mult_aux(ah, bl)
 
-        """
-        print 'a = ', format(a)
-        print 'b = ', format(b)
-        print 'c = ', format(c)
-        print 'd = ', format(d)"""
-
-        e = binary_mult_aux(a, c)
-        f = binary_mult_aux(b, d)
-        g = binary_mult_aux(b, c)
-        h = binary_mult_aux(a, d)
-
-        """
-        print 'e = ', format(e)
-        print 'f = ', format(f)
-        print 'g = ', format(g)
-        print 'h = ', format(h)"""
-
-        t1 = shift_left(e, n)
-        t2 = full_adder(g, h)
+        t1 = shift_left(x1, n)
+        t2 = full_adder(x3, x4)
         t3 = shift_left(t2, m)
         t4 = full_adder(t1, t3)
 
-        """
-        print 't1 = ', format(t1)
-        print 't2 = ', format(t2)
-        print 't3 = ', format(t3)
-        print 't4 = ', format(t4)"""
-
-        final = full_adder(t4, f)
-
-        #print 'final = ', format(final)
+        final = full_adder(t4, x2)
 
     return final
 
