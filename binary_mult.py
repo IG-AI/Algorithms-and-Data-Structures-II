@@ -140,7 +140,7 @@ def binary_mult(A, B):
 
 def binary_mult_aux(A, B, n):
     """
-    Sig:    int[0..n-1], int[0..n-1] ==> int[0..2*n-1]
+    Sig:    int[0..n-1], int[0..n-1] ==> int[0..m]
     Pre:    A and B cannot be empty, A and B have equal length and ((len(A) & len(B)) % 2^k) == 0   
     Post:   Binary multiplication of A and B
     Var:    n / 2, A / 2, B / 2
