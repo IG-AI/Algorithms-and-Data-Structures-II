@@ -10,9 +10,10 @@ import unittest
 
 def birthday_present(P, n, t):
     '''
-    Sig: int[0..n-1], int, int --> Boolean
-    Pre:
-    Post:
+    Sig:  int[0..n-1], int, int --> Boolean
+    Pre:  Elements in P must be > 0
+    Post: Returns true if there exist elements in P
+          whose sum is t, otherwise false
     Example: P = [2, 32, 234, 35, 12332, 1, 7, 56]
              birthday_present(P, len(P), 299) = True
              birthday_present(P, len(P), 11) = False
@@ -27,6 +28,16 @@ def birthday_present(P, n, t):
 
 
 def birthday_present_aux(P, n, t):
+    '''
+    Sig:  int[0..n-1], int, int --> Boolean
+    Pre:  Elements in P must be > 0
+    Post: Returns true if there exist elements in P
+          whose sum is t, otherwise false
+    Var:  n-1, t or t-P[n-1]
+    Example: P = [2, 32, 234, 35, 12332, 1, 7, 56]
+             birthday_present(P, len(P), 299) = True
+             birthday_present(P, len(P), 11) = False
+    '''
     if n == 0 and t == 0:
         A[n-1][t] = True
         return A[n-1][t]
@@ -49,20 +60,26 @@ def birthday_present_aux(P, n, t):
 
 def birthday_present_subset(P, n, t):
     '''
-    Sig: int[0..n-1], int, int --> int[0..m]
-    Pre: 
-    Post: 
+    Sig:  int[0..n-1], int, int --> int[0..m]
+    Pre:  Elements in P must be > 0
+    Post: Returns a list of elements whose sum is t 
     Example: P = [2, 32, 234, 35, 12332, 1, 7, 56]
              birthday_present_subset(P, len(P), 299) = [56, 7, 234, 2]
              birthday_present_subset(P, len(P), 11) = []
     '''
+    # Initialize return list, R
+    # Type: int[0..n]
     R = []
+    # Initialize the dynamic programming matrix, A
+    # Type: Boolean[0..n][0..t]
     A = [[None for i in range(t + 1)] for j in range(n + 1)]
     if t <= 0:
         return []
     
     for i in range(t+1):
+        #Variant: (t+1) - i
         for j in range(n+1):
+            #Variant: (n+1) - j
             if i == 0 and j == 0:
                 A[j][i] = True
             elif i == 0:
@@ -74,8 +91,10 @@ def birthday_present_subset(P, n, t):
             else:
                 A[j][i] = A[j-1][i] or A[j-1][i-P[j-1]]
     while True:
+        #Variant: none
         i = 0
         while A[i][t - sum(R)] == False:
+            #Variant: A[i][t - sum(R)] - i
             i = i + 1
         R.append(P[i-1])
         if t == sum(R):
