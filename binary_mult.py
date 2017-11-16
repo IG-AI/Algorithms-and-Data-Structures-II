@@ -15,12 +15,6 @@ def shift_left(l, n):
     return l
 
 
-def shift_right(l, n):
-    for i in range(n):
-        l.insert(0, 0)
-    return l
-
-
 def full_adder(A, B):
     carry = 0
     if len(A) != len(B):
