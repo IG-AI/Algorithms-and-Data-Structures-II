@@ -20,6 +20,8 @@ def birthday_present(P, n, t):
     # Initialize the dynamic programming matrix, A
     # Type: Boolean[0..n][0..t]
     global A
+    if t <= 0:
+        return False
     A = [[None for i in range(t + 1)] for j in range(n + 1)]
     return birthday_present_aux(P, n, t)
 
@@ -55,26 +57,28 @@ def birthday_present_subset(P, n, t):
              birthday_present_subset(P, len(P), 11) = []
     '''
     R = []
-
+    if t <= 0:
+        return []
+    
     for i in range(t+1):
-    	for j in range(n+1):
-    	 if i == 0 and j == 0:
-    		A[j][i] = True
-    	 elif i == 0:
-    		A[j][i] = True
-    	 elif j == 0:
-    		A[j][i] = False
-    	 elif P[j-1] > i:
-    		A[j][i] = A[j-1][i]
-    	 else:
-    		A[j][i] = A[j-1][i] or A[j-1][i-P[j-1]]
+        for j in range(n+1):
+            if i == 0 and j == 0:
+                A[j][i] = True
+            elif i == 0:
+                A[j][i] = True
+            elif j == 0:
+                A[j][i] = False
+            elif P[j-1] > i:
+                A[j][i] = A[j-1][i]
+            else:
+                A[j][i] = A[j-1][i] or A[j-1][i-P[j-1]]
     while True:
-      i = 0
-      while A[i][t - sum(R)] == False:
-    	i = i + 1
-      R.append(P[i-1])
-      if t == sum(R):
-        return R
+        i = 0
+        while A[i][t - sum(R)] == False:
+            i = i + 1
+        R.append(P[i-1])
+        if t == sum(R):
+            return R
 
 
 class BirthdayPresentTest(unittest.TestCase):
@@ -108,6 +112,12 @@ class BirthdayPresentTest(unittest.TestCase):
         self.assertTrue(birthday_present(P, n, t))
         self.assertItemsEqual(birthday_present_subset(P, n, t), 
                               [56, 7, 234, 2])
+        P = [1]
+        n = len(P)
+        t = 0
+        self.assertFalse(birthday_present(P, n, t))
+        self.assertItemsEqual(birthday_present_subset(P, n, t), 
+                              [])
 
         
 if __name__ == '__main__':

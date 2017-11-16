@@ -173,6 +173,10 @@ class BinaryMultTest(unittest.TestCase):
         B = [1]
         answer = binary_mult(A, B)
         self.assertEqual(answer, [1])
+        A = [0, 1, 1, 0]
+        B = [1, 1]
+        answer = binary_mult(A, B)
+        self.assertEqual(answer, [0, 1, 0, 0, 1, 0])
 
 
 if __name__ == '__main__':
