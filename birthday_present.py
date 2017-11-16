@@ -57,6 +57,7 @@ def birthday_present_subset(P, n, t):
              birthday_present_subset(P, len(P), 11) = []
     '''
     R = []
+    A = [[None for i in range(t + 1)] for j in range(n + 1)]
     if t <= 0:
         return []
     
@@ -100,6 +101,12 @@ class BirthdayPresentTest(unittest.TestCase):
         n = len(P)
         t = 11
         self.assertFalse(birthday_present(P, n, t))
+
+        P = [1]
+        n = len(P)
+        t = 0
+        self.assertFalse(birthday_present_subset(P, n, t))
+
     def test_sol_sanity(self):
         """Sanity Test for birthday_present_subset()
         
@@ -109,13 +116,11 @@ class BirthdayPresentTest(unittest.TestCase):
         P = [2, 32, 234, 35, 12332, 1, 7, 56]
         n = len(P)
         t = 299
-        self.assertTrue(birthday_present(P, n, t))
         self.assertItemsEqual(birthday_present_subset(P, n, t), 
                               [56, 7, 234, 2])
         P = [1]
         n = len(P)
         t = 0
-        self.assertFalse(birthday_present(P, n, t))
         self.assertItemsEqual(birthday_present_subset(P, n, t), 
                               [])
 
