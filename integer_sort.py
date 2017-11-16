@@ -57,5 +57,9 @@ class IntegerSortTest(unittest.TestCase):
         R = integer_sort(A, 1)
         self.assertEqual(R, [1])
 
+        A = []
+        R = integer_sort(A, 0)
+        self.assertEqual(R, [])
+
 if __name__ == '__main__':
     unittest.main()
