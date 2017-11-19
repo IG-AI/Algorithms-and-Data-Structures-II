@@ -8,6 +8,7 @@ Student Names: Daniel Ågstrand, Linnea Andersson
 '''
 import unittest
 
+
 def birthday_present(P, n, t):
     '''
     Sig:  int[0..n-1], int, int --> Boolean
@@ -39,30 +40,30 @@ def birthday_present_aux(P, n, t):
              birthday_present(P, len(P), 11) = False
     '''
     if n == 0 and t == 0:
-        A[n-1][t] = True
-        return A[n-1][t]
+        A[n - 1][t] = True
+        return A[n - 1][t]
     if n == 0:
         return False
     elif t == 0:
-        A[n-1][t] = True
-        return A[n-1][t]
-    elif P[n-1] > t:
-      if A[n-1][t] is None:
-         A[n-1][t] = birthday_present_aux(P, n-1, t)
-      return A[n-1][t]
+        A[n - 1][t] = True
+        return A[n - 1][t]
+    elif P[n - 1] > t:
+        if A[n - 1][t] is None:
+            A[n - 1][t] = birthday_present_aux(P, n - 1, t)
+        return A[n - 1][t]
     else:
-      if A[n-1][t] is None:
-         A[n-1][t] = birthday_present_aux(P, n-1, t)
-      if A[n-1][t-P[n-1]] is None:
-         A[n-1][t-P[n-1]] = birthday_present_aux(P,n-1,t-P[n-1])
-    return A[n-1][t] or A[n-1][t-P[n-1]]
+        if A[n - 1][t] is None:
+            A[n - 1][t] = birthday_present_aux(P, n - 1, t)
+        if A[n - 1][t - P[n - 1]] is None:
+            A[n - 1][t - P[n - 1]] = birthday_present_aux(P, n - 1, t - P[n - 1])
+    return A[n - 1][t] or A[n - 1][t - P[n - 1]]
 
 
 def birthday_present_subset(P, n, t):
     '''
     Sig:  int[0..n-1], int, int --> int[0..m]
     Pre:  Elements in P must be > 0
-    Post: Returns a list of elements whose sum is t 
+    Post: Returns a list of elements whose sum is t
     Example: P = [2, 32, 234, 35, 12332, 1, 7, 56]
              birthday_present_subset(P, len(P), 299) = [56, 7, 234, 2]
              birthday_present_subset(P, len(P), 11) = []
@@ -74,75 +75,30 @@ def birthday_present_subset(P, n, t):
     # Type: Boolean[0..n][0..t]
     A = [[None for i in range(t + 1)] for j in range(n + 1)]
     if t <= 0:
-        return []
-    
-    for i in range(t+1):
-        #Variant: (t+1) - i
-        for j in range(n+1):
-            #Variant: (n+1) - j
+        return R
+
+    for i in range(t + 1):
+        # Variant: (t+1) - i
+        for j in range(n + 1):
+            # Variant: (n+1) - j
             if i == 0 and j == 0:
                 A[j][i] = True
             elif i == 0:
                 A[j][i] = True
             elif j == 0:
                 A[j][i] = False
-            elif P[j-1] > i:
-                A[j][i] = A[j-1][i]
+            elif P[j - 1] > i:
+                A[j][i] = A[j - 1][i]
             else:
-                A[j][i] = A[j-1][i] or A[j-1][i-P[j-1]]
+                A[j][i] = A[j - 1][i] or A[j - 1][i - P[j - 1]]
+    if A[n][t] == False:
+        return R
     while True:
-        #Variant: none
+        # Variant: none
         i = 0
         while A[i][t - sum(R)] == False:
-            #Variant: A[i][t - sum(R)] - i
+            # Variant: A[i][t - sum(R)] - i
             i = i + 1
-        R.append(P[i-1])
+        R.append(P[i - 1])
         if t == sum(R):
             return R
-
-
-class BirthdayPresentTest(unittest.TestCase):
-    """Test Suite for birthday present problem
-    
-    Any method named "test_something" will be run when this file is 
-    executed. Use the sanity check as a template for adding your own 
-    tests if you wish. 
-    (You may delete this class from your submitted solution.)
-    """
-    
-    def test_sat_sanity(self):
-        """Sanity Test for birthday_present()
-        
-        This is a simple sanity check;
-        passing is not a guarantee of correctness.
-        """
-        P = [2, 32, 234, 35, 12332, 1, 7, 56]
-        n = len(P)
-        t = 11
-        self.assertFalse(birthday_present(P, n, t))
-
-        P = [1]
-        n = len(P)
-        t = 0
-        self.assertFalse(birthday_present_subset(P, n, t))
-
-    def test_sol_sanity(self):
-        """Sanity Test for birthday_present_subset()
-        
-        This is a simple sanity check;
-        passing is not a guarantee of correctness.
-        """
-        P = [2, 32, 234, 35, 12332, 1, 7, 56]
-        n = len(P)
-        t = 299
-        self.assertItemsEqual(birthday_present_subset(P, n, t), 
-                              [56, 7, 234, 2])
-        P = [1]
-        n = len(P)
-        t = 0
-        self.assertItemsEqual(birthday_present_subset(P, n, t), 
-                              [])
-
-        
-if __name__ == '__main__':
-    unittest.main()

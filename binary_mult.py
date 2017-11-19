@@ -4,7 +4,7 @@
 Assignment 1: Binary Multiplication
 
 Team Number: 13
-Student Names: Daniel Ågstrand, Linnea Andersson 
+Student Names: Daniel Ågstrand, Linnea Andersson
 '''
 import unittest
 
@@ -13,7 +13,7 @@ def shift_left(l, n):
     """
     Sig:    int[0..len-1], int n ==> int[0..((len - 1) + n[0])]
     Pre:    None
-    Post:   l is the same as input but with n zeros at the end 
+    Post:   l is the same as input but with n zeros at the end
     Example:     shift_left([0,1,1], 1) = [0,1,1,0]
     """
     for i in range(n):
@@ -86,7 +86,7 @@ def binary_mult(A, B):
     """
     Sig:    int[0..n-1], int[0..n-1] ==> int[0..2*n-1]
     Pre:    A and B cannot be empty
-    Post:   Binary multiplication of A and B   
+    Post:   Binary multiplication of A and B
     Example:    binary_mult([0,1,1],[1,0,0]) = [0,0,1,1,0,0]
     """
     if len(A) == 1 and len(B) == 1:
@@ -109,7 +109,7 @@ def binary_mult(A, B):
     newlen = len(A)
     while add:
         #Variant: add, power
-        if (newlen % (2 ** power)) == 0:
+        if newlen == (2 ** power):
             add = False
         if newlen < 2 ** power:
             n = 2 ** power - newlen
@@ -120,10 +120,11 @@ def binary_mult(A, B):
             add = False
         else:
             power += 1
-            
+
     nlen = len(A)
     # Initialize the return list, temp, from the recursive function binary_mult_aux(A, B, n)
     # Type: int[0..n]
+    print len(A)
     temp = binary_mult_aux(A, B, nlen)
     n = len(temp) - finallen
     if n < 0:
@@ -141,7 +142,7 @@ def binary_mult(A, B):
 def binary_mult_aux(A, B, n):
     """
     Sig:    int[0..n-1], int[0..n-1] ==> int[0..m]
-    Pre:    A and B cannot be empty, A and B have equal length and ((len(A) & len(B)) % 2^k) == 0   
+    Pre:    A and B cannot be empty, A and B have equal length and ((len(A) & len(B)) % 2^k) == 0
     Post:   Binary multiplication of A and B
     Var:    n / 2, A / 2, B / 2
     Example:    binary_mult([0,1,1],[1,0,0]) = [0,0,1,1,0,0]
@@ -169,49 +170,3 @@ def binary_mult_aux(A, B, n):
         final = full_adder(t4, x2)
 
     return final
-
-
-class BinaryMultTest(unittest.TestCase):
-    """Test Suite for binary multiplication problem
-    
-    Any method named "test_something" will be run when this file is 
-    executed. Use the sanity check as a template for adding your own 
-    tests if you wish. 
-    (You may delete this class from your submitted solution.)
-    """
-
-    def test_sanity(self):
-        """Sanity Test
-        
-        This is a simple sanity check for your function;
-        passing is not a guarantee of correctness.
-        """
-
-        A = [0, 1, 1, 0]
-        B = [0, 0, 1, 0]
-        answer = binary_mult(A, B)
-        self.assertEqual(answer, [0, 0, 0, 0, 1, 1, 0, 0])
-        A = [0, 1, 0]
-        B = [0, 0, 1]
-        answer = binary_mult(A, B)
-        self.assertEqual(answer, [0, 0, 0, 0, 1, 0])
-        A = [0, 1, 1, 0]
-        B = [1, 1, 0]
-        answer = binary_mult(A, B)
-        self.assertEqual(answer, [0, 1, 0, 0, 1, 0, 0])
-        A = [1]
-        B = [1]
-        answer = binary_mult(A, B)
-        self.assertEqual(answer, [1])
-        A = [0, 1, 1, 0]
-        B = [1, 1]
-        answer = binary_mult(A, B)
-        self.assertEqual(answer, [0, 1, 0, 0, 1, 0])
-        A = [0, 0, 1, 1, 0]
-        B = [1, 1, 0, 0]
-        answer = binary_mult(A, B)
-        self.assertEqual(answer, [0, 0, 1, 0, 0, 1, 0, 0, 0])
-
-
-if __name__ == '__main__':
-    unittest.main()
