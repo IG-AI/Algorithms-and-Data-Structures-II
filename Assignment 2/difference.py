@@ -8,7 +8,6 @@ Student Names: Daniel Ågstrand, Linnea Andersson
 '''
 import unittest
 
-import math
 # Sample matrix provided by us:
 from string import ascii_lowercase
 
@@ -67,12 +66,10 @@ def difference_aux(u,r,c,R):
     un = len(u) - 1
     u = list(u)
     r = list(r)
-    print u
-    print r
     if rn == 0:
         return c
     elif un == 0 and rn != 0:
-        return math.inf
+        return float("inf")
     elif un == 0:
         return c + R[u[un]][r[rn]]
     elif r[rn] == '-' and u[un] != '-':
@@ -83,13 +80,10 @@ def difference_aux(u,r,c,R):
         u.pop()
         return difference_aux(u,r,c,R)
     else:
-        tempr = r.copy()
+        tempr = list(r)
         cost = R[u[un]][r[rn]]
         r.pop()
         u.pop()
-        print '---------------------'
-        print r
-        print tempr
         return min(difference_aux(u,tempr,c+1,R), difference_aux(u,r,c+cost,R))
     
 
