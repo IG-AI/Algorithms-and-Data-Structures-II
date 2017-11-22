@@ -60,10 +60,8 @@ def min_list(l):
 def min_align(u, r, j, k, temp, R):
     global orgir
     global templist
-    global a
     if j > (orgir - 1):
         return templist.append(min_matrix(temp))
-        a += 1
     for i in range(orgir + 1):
         if ((orgir + 1) - k) == 0:
             j += 1
@@ -92,14 +90,12 @@ def difference(u,r,R):
     """
     global orgiu
     global orgir
-    global a
     global templist
     orgiu = len(u) - 1
     orgir = len(r) - 1
 
     j = 0
     k = 0
-    a = 0
     temp = [[0]*(len(r))]*(len(r))
     templist= []
     return min_align(u, r, j, k, temp, R)
