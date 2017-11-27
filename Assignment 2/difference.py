@@ -11,16 +11,16 @@ import unittest
 from string import ascii_lowercase
 
 # Solution to part b:
-def difference(u,r,R):
+def min_difference(u,r,R):
     """
     Sig:    string, string, int[0..|A|, 0..|A|] ==> int
     Pre:    
     Post:    
     Example: Let R be the resemblance matrix where every change and skip costs 1
-             difference("dinamck","dynamic",R) ==> 3
+             min_difference("dinamck","dynamic",R) ==> 3
     """
     # To get the resemblance between two letters, use code like this:
-    # difference = R['a']['b']
+    # min_difference = R['a']['b']
     global lenu
     global lenr
     if len(u) < len(r):
@@ -37,10 +37,10 @@ def difference(u,r,R):
     A = [[0 for i in range(lenr+1)] for j in range(lenu+1)]
     global V
     V = [[0 for i in range(lenr+1)] for j in range(lenu+1)]
-    A[lenu][lenr] = difference_aux(u,lenu,r,lenr,R)
+    A[lenu][lenr] = min_difference_aux(u,lenu,r,lenr,R)
     return A[lenu][lenr]
 
-def difference_aux(u,lenu,r,lenr,R):
+def min_difference_aux(u,lenu,r,lenr,R):
     for i in range(lenu+1):
         for j in range(lenr+1):
             if i == 0 and j == 0:
@@ -100,11 +100,11 @@ def difference_aux(u,lenu,r,lenr,R):
 
                 '''else:
                 if A[lenu-1][lenr-1] == 0:
-                    A[lenu-1][lenr-1] = difference_aux(u,lenu-1,r,lenr-1,R)
+                    A[lenu-1][lenr-1] = min_difference_aux(u,lenu-1,r,lenr-1,R)
                 if A[lenu][lenr-1] == 0:
-                    A[lenu][lenr-1] = difference_aux(u,lenu,r,lenr-1,R)
+                    A[lenu][lenr-1] = min_difference_aux(u,lenu,r,lenr-1,R)
                 if A[lenu-1][lenr] == 0:
-                    A[lenu-1][lenr] = difference_aux(u,lenu-1,r,lenr,R)'''
+                    A[lenu-1][lenr] = min_difference_aux(u,lenu-1,r,lenr,R)'''
 
             else: 
                 A[i][j] = min(A[i-1][j] + R[u[i]]['-'], A[i][j-1] + R['-'][r[j]], A[i-1][j-1] + min(R[u[i]][r[j]], R['-'][r[j]] + R[u[i]]['-']))
@@ -125,16 +125,16 @@ def difference_aux(u,lenu,r,lenr,R):
 
 # Solution to part c:
 
-def difference_align(u,r,R):
+def min_difference_align(u,r,R):
     """
     Sig:    string, string, int[0..|A|, 0..|A|] ==> int, string, string
     Pre:    
     Post:    
     Example: Let R be the resemblance matrix where every change and skip costs 1
-             difference_align("dinamck","dynamic",R) ==>
+             min_min_difference_align("dinamck","dynamic",R) ==>
                                     3, "dinam-ck", "dynamic-"
     """ 
-    diff = difference(u,r,R)
+    diff = min_difference(u,r,R)
     if len(u) < len(r):
         for i in range(len(r)-len(u)):
             u = '-' + u
@@ -145,8 +145,8 @@ def difference_align(u,r,R):
     j = lenr
     u = list(u)
     r = list(r)
-    for k in range(max(lenu+1,lenr+1)):
-        print(A[:][k])
+    #for k in range(max(lenu+1,lenr+1)):
+    #    print(A[:][k])
     while j != 0 or i != 0:
 
         if i == 0: 
@@ -220,7 +220,7 @@ def qwerty_distance():
                     R[a][b] = math.fabs(rowB - rowA) + math.fabs(posA - contentB.index(b))
     return R
 
-class DifferenceTest(unittest.TestCase):
+class min_differenceTest(unittest.TestCase):
     """Test Suite for search string replacement problem
 
     Any method named "test_something" will be run when this file is
@@ -230,10 +230,10 @@ class DifferenceTest(unittest.TestCase):
     """
 
     def test_diff_sanity(self):
-        """Difference sanity test
+        """min_difference sanity test
 
         Given a simple resemblance matrix, test that the reported
-        difference is the expected minimum. Do NOT assume we will always
+        min_difference is the expected minimum. Do NOT assume we will always
         use this resemblance matrix when testing!
         """
         alphabet = ascii_lowercase + '-'
@@ -262,13 +262,13 @@ class DifferenceTest(unittest.TestCase):
                     ) for a in alphabet ] )
         # QWERTY resemblance matrix:
         R = qwerty_distance();
-        diff, u, r = difference_align("polynomial", "exponential", R)
-        #diff, u, r = difference_align("pol", "exp", R)
+        diff, u, r = min_difference_align("polynomial", "exponential", R)
+        #diff, u, r = min_min_difference_align("pol", "exp", R)
         # Warning: we may (read: 'will') use another matrix!
         #self.assertEqual(diff, 6)
         # Warning: there may be other optimal matchings!
-        print(u)
-        print(r)
+        #print(u)
+        #print(r)
         self.assertEqual(u, '--polyn-om-ial') 
         self.assertEqual(r, 'exp-o-ne-ntial') 
 if __name__ == '__main__':
