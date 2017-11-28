@@ -46,11 +46,11 @@ def ring(G):
                     if DFS_visit(k,G) == True:
                         return True
             else:
-                temp = G.neighbors(u)
+                temp = G.neighbors(n)
                 temp.remove(previous)
                 for j in temp:
                     previous = n
-                    if DFS_visit(k,G) == True:
+                    if DFS_visit(j,G) == True:
                         return True
     return False
         
