@@ -3,8 +3,8 @@
 '''
 Assignment 2: Ring Detection
 
-Team Number:
-Student Names:
+Team Number: 13
+Student Names: Daniel Ågstrand, Linnea Andersson
 '''
 import unittest
 import networkx as nx
@@ -27,19 +27,24 @@ def ring(G):
     """
     Sig: graph G(node,edge) ==> boolean
     Pre:
-    Post:
+    Post: Returns true if there is a ring in the graph
     Example: 
         ring(g1) ==> False
         ring(g2) ==> True
     """
     global nodes
     global previous
+    global visited
+    global i
+    i = 0
+    visited = []
     nx.set_node_attributes(G, 'color', 'white')
     nodes = nx.get_node_attributes(G, 'color')
     for n in G:
         previous = None
         if nodes[n] is 'white':
             nodes[n] = 'red'
+            visited.append(n)
             if previous is None:
                 for k in G.neighbors(n):
                     previous = n
@@ -55,12 +60,27 @@ def ring(G):
     return False
         
 def DFS_visit(u,G):
+    """
+    Sig: node u, graph G(node,edge) ==> boolean
+    Pre:
+    Post: Returns true if a node has been vistited before
+    Example: 
+        DFS_visit(node u1, graph G1) ==> False
+        DFS_visit(node u2, graph G2) ==> True
+    """
     global previous
+    global i
+    i += 1
     nodes[u] = 'red'
+    visited.append(u)
     temp = G.neighbors(u)
     temp.remove(previous)
-    if temp is []:
-        return
+    print temp
+    if temp == []:
+        """for j in range(i):
+            visited.pop()
+            print visited"""
+        return False
     for j in temp:
         if nodes[j] is 'white':
             nodes[j] = 'red'
@@ -70,7 +90,7 @@ def DFS_visit(u,G):
         else:
             return True
         
-            
+
 
 
 def ring_extended(G):
@@ -83,6 +103,37 @@ def ring_extended(G):
         ring(g2) ==>  True, [3,7,8,6,3]
     """
     
+    if ring(G) is False:
+        return False, []
+    else:
+        tic = 0
+        vlength = len(visited)-1
+        temp = []
+        temp.append(visited[vlength])
+        lastnode = visited[vlength]
+        for i in range(vlength+1):
+            if lastnode in G.neighbors(visited[vlength-i-1]):
+                tic += 1
+                temp.append(visited[vlength - i-1])
+                if tic == 2:
+                    temp.append(visited[vlength])
+                    break 
+            elif visited[vlength-i-1] in G.neighbors(visited[vlength-i]):
+                temp.append(visited[vlength-i-1])
+                
+        final = []
+        
+        for n in range(len(temp)):
+            tic = 0
+            for i in range(len(G.neighbors(temp[n]))):
+                neighborslist = G.neighbors(temp[n])
+                if neighborslist[i] in temp:
+                    tic += 1
+                if tic == 2:
+                    final.append(temp[n])
+                    break
+                      
+        return True, final
     
 def draw_graph(G,r):
     """Draw graph and the detected ring
@@ -157,26 +208,66 @@ class RingTest(unittest.TestCase):
         G.add_node(6);
         G.add_node(7);
         G.add_node(8);
-        G.add_edge(1, 4);
-        G.add_edge(4, 5);
-        G.add_edge(2, 8);
-        G.add_edge(3, 5);
-        G.add_edge(0, 3);
-        G.add_edge(6, 8);
-        G.add_edge(1, 5);
-        G.add_edge(5, 8);
+        G.add_node(9);
+        G.add_node(10);
+        G.add_node(11);
+        G.add_node(12);
+        G.add_node(13);
+        G.add_node(14);
         G.add_edge(4, 8);
-        G.add_edge(0, 3);
+        G.add_edge(0, 6);
+        G.add_edge(7, 12);
+        G.add_edge(2, 4);
+        G.add_edge(5, 11);
+        G.add_edge(12, 13);
+        G.add_edge(5, 13);
+        G.add_edge(2, 5);
+        G.add_edge(0, 7);
+        G.add_edge(7, 10);
+        G.add_edge(5, 12);
+        G.add_edge(11, 13);
+        G.add_edge(5, 10);
+        G.add_edge(2, 13);
         self.assertTrue(ring(G))
         
-    """def test_extended_sanity(self):
-        #sanity test for returned ring
-        testgraph = nx.Graph([(0,1),(0,2),(0,3),(2,4),(2,5),(3,6),(3,7),(7,8),(6,8)])
-        found, thering = ring_extended(testgraph)
+    def test_extended_sanity(self):
+        """sanity test for returned ring"""
+        #testgraph = nx.Graph([(0,1),(0,2),(0,3),(2,4),(2,5),(3,6),(3,7),(7,8),(6,8)])
+        G = nx.Graph();
+        G.add_node(0);
+        G.add_node(1);
+        G.add_node(2);
+        G.add_node(3);
+        G.add_node(4);
+        G.add_node(5);
+        G.add_node(6);
+        G.add_node(7);
+        G.add_node(8);
+        G.add_node(9);
+        G.add_node(10);
+        G.add_node(11);
+        G.add_node(12);
+        G.add_node(13);
+        G.add_node(14);
+        G.add_edge(4, 8);
+        G.add_edge(0, 6);
+        G.add_edge(7, 12);
+        G.add_edge(2, 4);
+        G.add_edge(5, 11);
+        G.add_edge(12, 13);
+        G.add_edge(5, 13);
+        G.add_edge(2, 5);
+        G.add_edge(0, 7);
+        G.add_edge(7, 10);
+        G.add_edge(5, 12);
+        G.add_edge(11, 13);
+        G.add_edge(5, 10);
+        G.add_edge(2, 13);
+        found, thering = ring_extended(G)
         self.assertTrue(found)
-        self.is_ring(testgraph, thering)
+        self.is_ring(G, thering)
         # Uncomment to visualize the graph and returned ring:
-        draw_graph(testgraph,thering)"""
+        #draw_graph(G,thering)
     @classmethod
     def tearDownClass(cls):
         if HAVE_PLT:
