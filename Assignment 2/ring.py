@@ -38,19 +38,19 @@ def ring(G):
     nodes = nx.get_node_attributes(G, 'color')
     for n in G:
         previous = None
-        if nodes[n] == 'white':
+        if nodes[n] is 'white':
             nodes[n] = 'red'
-            if previous == None:
+            if previous is None:
                 for k in G.neighbors(n):
                     previous = n
-                    if DFS_visit(k,G) == True:
+                    if DFS_visit(k,G) is True:
                         return True
             else:
                 temp = G.neighbors(n)
                 temp.remove(previous)
                 for j in temp:
                     previous = n
-                    if DFS_visit(j,G) == True:
+                    if DFS_visit(j,G) is True:
                         return True
     return False
         
@@ -59,13 +59,14 @@ def DFS_visit(u,G):
     nodes[u] = 'red'
     temp = G.neighbors(u)
     temp.remove(previous)
-    if temp == None:
+    if temp is []:
         return
     for j in temp:
-        if nodes[j] == 'white':
+        if nodes[j] is 'white':
             nodes[j] = 'red'
             previous = u
-            DFS_visit(j,G)
+            if DFS_visit(j,G) is True:
+                return True
         else:
             return True
         
@@ -143,12 +144,30 @@ class RingTest(unittest.TestCase):
         This is a simple sanity check for your function;
         passing is not a guarantee of correctness.
         """
-        testgraph = nx.Graph([(0,1),(0,2),(0,3),(2,4),(2,5),(3,6),(3,7),(7,8)])
-        #self.assertFalse(ring(testgraph))
-        testgraph.add_edge(6,8)
-        testgraph.clear()
-        testgraph.add_node(1)
-        self.assertTrue(ring(testgraph))
+        """testgraph = nx.Graph([(0,1),(0,2),(0,3),(2,4),(2,5),(3,6),(3,7),(7,8)])
+        self.assertFalse(ring(testgraph))
+        testgraph.add_edge(6,8)"""
+        G = nx.Graph();
+        G.add_node(0);
+        G.add_node(1);
+        G.add_node(2);
+        G.add_node(3);
+        G.add_node(4);
+        G.add_node(5);
+        G.add_node(6);
+        G.add_node(7);
+        G.add_node(8);
+        G.add_edge(1, 4);
+        G.add_edge(4, 5);
+        G.add_edge(2, 8);
+        G.add_edge(3, 5);
+        G.add_edge(0, 3);
+        G.add_edge(6, 8);
+        G.add_edge(1, 5);
+        G.add_edge(5, 8);
+        G.add_edge(4, 8);
+        G.add_edge(0, 3);
+        self.assertTrue(ring(G))
         
     """def test_extended_sanity(self):
         #sanity test for returned ring
