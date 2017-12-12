@@ -43,7 +43,39 @@ def sensitive(G, s, t, F):
     Post:   
     Ex:    sensitive(G,0,5,F) ==> (1, 3)
     """
+    mincut = []
+    paths = []
+    for u,v in G.edges():
+        if G[u][v]['capacity'] == F[u][v]:
+            mincut.append(G[u][v])
+    nx.draw(G)
+    findpath(G,t,mincut)
+    print(paths)
     return None, None
+
+def findpath(G,t,u):
+    for n in DiGraph.predecessors(t):
+        path.append(n)
+        if n in u:
+            break
+        else:
+            findpath(G,n,u)
+    paths.append(path)
+
+'''def BFS(G,s):
+    queue = []
+    queue.append(s)
+    set.node.attributes(G,'color','white')
+    nodes = get.node.attributes(G,'color')
+    nodes[s] = 'red'
+    while queue != []:
+        u = queue.pop()
+        for n in G.neighbors(u):
+            if nodes[n] == 'white':
+                nodes[n] = 'red'
+                queue.append(n)
+        nodes[u] = 'blue''''
+        
 
 
 class SensitiveSanityCheck(unittest.TestCase):
