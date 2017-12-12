@@ -31,6 +31,48 @@ try:
 except ImportError:
     HAVE_PLT = False
 
+
+"""
+def breadth_first_search(G, start, t):
+    visited = deque()
+    start.setPred(None)
+    set_node_attributes(G, 'Color', 'White')
+    attribute = set_node_attribute(G, 'Color')
+
+    visited.append(start)
+    while visted.size() > 0:
+        current = visited.pop()
+        for n in current.allneighbors(G, n):
+            if attribute[n] == 'White':
+                attribute[n] = 'Grey'
+                n.parent.add(current)
+                current.append(n)
+        attribute[n] = 'Black'
+
+        
+    routelist = [[]]
+    return route(t, start, routelist, 0, 0)"""
+
+def route_search(G, s, t):
+    predlist = [[]]
+    for n in G:
+        predlist.append(G.predecessors(n))
+    routelist = [[]]
+    return route(s, t, predlist, routelist, 0)
+
+def route(node, t, predlist, routelist, n):
+    if node in mincut:
+        return routelist
+    if predlist[n].size() == 1:
+            routelist[n] = predlist[0]
+            route(routelist[n], t, predlist, routelist, n)
+    else:
+        for n in predlist:
+                routelist[n][m] = v
+                route(n, t, routelist, n+1)
+        return routelist
+    
+
 """
 F is represented in python as a dictionary of dictionaries;
 i.e., given two nodes u and v,
@@ -153,6 +195,7 @@ class SensitiveSanityCheck(unittest.TestCase):
         H = self.G.copy()
         # compute max flow
         flow_g, F_g = max_flow(self.G, s, t)
+        print route_search(self.G, s, t)
         # find a sensitive edge
         u,v = sensitive(self.G, s, t, F_g)
         # is u a node in G?
@@ -170,6 +213,7 @@ class SensitiveSanityCheck(unittest.TestCase):
             flow_h,
             flow_g,
             "Returned non-sensitive edge ({},{})".format(u,v))
+    
 
     def test_sanity(self):
         """Sanity check"""
