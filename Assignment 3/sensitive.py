@@ -43,26 +43,52 @@ def sensitive(G, s, t, F):
     Post:   
     Ex:    sensitive(G,0,5,F) ==> (1, 3)
     """
+    global path
+    global pathlist
+    global found
+    mincutedges = []
+    found = False
+    path = []
     mincut = []
-    paths = []
+    pathlist = [[] for n in G.predecessors(t)]
     for u,v in G.edges():
         if G[u][v]['capacity'] == F[u][v]:
-            mincut.append(G[u][v])
-    nx.draw(G)
-    findpath(G,t,mincut)
-    print(paths)
-    return None, None
+            mincut.append(u)
+            mincutedges.append(G[u][v])
+    print mincutedges
+    pos = nx.spring_layout(G)
+    nx.draw_networkx_nodes(G,pos)
+    nx.draw_networkx_edges(G,pos)
+    nx.draw_networkx_labels(G,pos)
+    nx.draw_networkx_edge_labels(G,pos)
+    for j in range(len(mincut)):
+        print pathlist
+        findpath(G,s,t,j)
+    return pathlist
 
-def findpath(G,t,u):
-    for n in DiGraph.predecessors(t):
-        path.append(n)
-        if n in u:
+def findpath(G,s,t,j):
+    global found
+    i = 0
+    print 'yeah'
+    if found is True:
+        return
+    for n in G.predecessors(t):
+        print n
+        pathlist[i].append(n)
+        i += 1
+        print pathlist
+        print 'mmkmk'
+        if n is j:
+            found = True
+            print'hej'
+            return
+        elif n is s:
             break
         else:
-            findpath(G,n,u)
-    paths.append(path)
+            print'Hej'
+            findpath(G,s,n,j)
 
-'''def BFS(G,s):
+    '''def BFS(G,s):
     queue = []
     queue.append(s)
     set.node.attributes(G,'color','white')
@@ -74,7 +100,7 @@ def findpath(G,t,u):
             if nodes[n] == 'white':
                 nodes[n] = 'red'
                 queue.append(n)
-        nodes[u] = 'blue''''
+        nodes[u] = 'blue'''
         
 
 
@@ -137,8 +163,8 @@ class SensitiveSanityCheck(unittest.TestCase):
         H[u][v]["capacity"] = H[u][v]["capacity"] - 1
         # recompute max flow
         flow_h, F_h = max_flow(H, s, t)
-        if draw:
-            self.draw_graph(H, u, v, flow_g, F_g, flow_h, F_h)
+        '''if draw:
+            self.draw_graph(H, u, v, flow_g, F_g, flow_h, F_h)'''
         # is the new max flow lower than the old max flow?
         self.assertLess(
             flow_h,
