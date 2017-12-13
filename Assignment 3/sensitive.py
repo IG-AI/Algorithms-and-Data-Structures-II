@@ -31,9 +31,50 @@ try:
 except ImportError:
     HAVE_PLT = False
 
-    
 
 """
+def breadth_first_search(G, start, t):
+    visited = deque()
+    start.setPred(None)
+    set_node_attributes(G, 'Color', 'White')
+    attribute = set_node_attribute(G, 'Color')
+
+    visited.append(start)
+    while visted.size() > 0:
+        current = visited.pop()
+        for n in current.allneighbors(G, n):
+            if attribute[n] == 'White':
+                attribute[n] = 'Grey'
+                n.parent.add(current)
+                current.append(n)
+        attribute[n] = 'Black'
+
+        
+    routelist = [[]]
+    return route(t, start, routelist, 0, 0)
+
+def route_search(G, s, t):
+    predlist = [[]]
+    for n in G:
+        predlist.append(G.predecessors(n))
+    routelist = [[]]
+    return route(s, t, predlist, routelist, 0)
+
+def route(node, t, predlist, routelist, n):
+    if node in mincut:
+        return routelist
+    if predlist[n].size() == 1:
+            routelist[n] = predlist[0]
+            route(routelist[n], t, predlist, routelist, n)
+    else:
+        for n in predlist:
+                routelist[n][m] = v
+                route(n, t, routelist, n+1)
+        return routelist
+"""
+    
+
+
 F is represented in python as a dictionary of dictionaries;
 i.e., given two nodes u and v,
 the computed flow from u to v is given by F[u][v].
@@ -47,7 +88,6 @@ def sensitive(G, s, t, F):
     """
     global path
     global pathlist
-    global found
     global nodes
     global i
     i = 0
@@ -68,6 +108,7 @@ def sensitive(G, s, t, F):
     nx.draw_networkx_edges(G,pos)
     nx.draw_networkx_labels(G,pos)
     nx.draw_networkx_edge_labels(G,pos)
+
     print mincut
     for j in range(len(mincut)):
         found = False
@@ -83,8 +124,17 @@ def findpath(G,s,t,j):
     global found
     global k
     nodes[t] = 'red'
+    capacity=nx.get_edge_attributes(G,'capacity')
+    print capacity
+    for j in range(len(mincut)):
+        findpath(G,s,t,j,capacity)
+    return pathlist
+
+def findpath(G,s,t,j,capacity):
+    i = 0
     if found is True:
         return
+    m = t
     for n in G.predecessors(t):
         k +=1
         print k
@@ -98,7 +148,25 @@ def findpath(G,s,t,j):
         else:
             return
     nodes[t] = 'blue'
-
+"""
+def findpath(G,s,t,j,capacity):
+    i = 0
+    if found is True:
+        return
+    m = t
+    for n in G.predecessors(t):
+        print (n,m)
+        pathlist[i].append(G.get_edge_data(n,m))
+        i += 1
+        m = n
+        print pathlist
+        print 'mmkmk'
+        if n is j:
+            return
+        elif n is s:
+            break
+        else:
+            findpath(G,s,n,j,capacity)
 
     '''def BFS(G,s):
     queue = []
