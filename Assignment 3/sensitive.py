@@ -31,46 +31,6 @@ try:
 except ImportError:
     HAVE_PLT = False
 
-
-"""
-def breadth_first_search(G, start, t):
-    visited = deque()
-    start.setPred(None)
-    set_node_attributes(G, 'Color', 'White')
-    attribute = set_node_attribute(G, 'Color')
-
-    visited.append(start)
-    while visted.size() > 0:
-        current = visited.pop()
-        for n in current.allneighbors(G, n):
-            if attribute[n] == 'White':
-                attribute[n] = 'Grey'
-                n.parent.add(current)
-                current.append(n)
-        attribute[n] = 'Black'
-
-        
-    routelist = [[]]
-    return route(t, start, routelist, 0, 0)"""
-
-def route_search(G, s, t):
-    predlist = [[]]
-    for n in G:
-        predlist.append(G.predecessors(n))
-    routelist = [[]]
-    return route(s, t, predlist, routelist, 0)
-
-def route(node, t, predlist, routelist, n):
-    if node in mincut:
-        return routelist
-    if predlist[n].size() == 1:
-            routelist[n] = predlist[0]
-            route(routelist[n], t, predlist, routelist, n)
-    else:
-        for n in predlist:
-                routelist[n][m] = v
-                route(n, t, routelist, n+1)
-        return routelist
     
 
 """
@@ -88,47 +48,57 @@ def sensitive(G, s, t, F):
     global path
     global pathlist
     global found
+    global nodes
+    global i
+    i = 0
+    global k
+    k = 0
     mincutedges = []
     found = False
     path = []
     mincut = []
-    pathlist = [[] for n in G.predecessors(t)]
     for u,v in G.edges():
         if G[u][v]['capacity'] == F[u][v]:
             mincut.append(u)
             mincutedges.append(G[u][v])
     print mincutedges
+    pathlist = [[[] for k in range(len(mincut))] for n in range(len(mincut))]
     pos = nx.spring_layout(G)
     nx.draw_networkx_nodes(G,pos)
     nx.draw_networkx_edges(G,pos)
     nx.draw_networkx_labels(G,pos)
     nx.draw_networkx_edge_labels(G,pos)
+    print mincut
     for j in range(len(mincut)):
-        print pathlist
-        findpath(G,s,t,j)
+        found = False
+        nx.set_node_attributes(G,'color','white')
+        nodes = nx.get_node_attributes(G,'color')
+        nodes[s] = 'blue'
+        findpath(G,s,t,mincut[j])
+        i += 1
+    print pathlist
     return pathlist
 
 def findpath(G,s,t,j):
     global found
-    i = 0
-    print 'yeah'
+    global k
+    nodes[t] = 'red'
     if found is True:
         return
     for n in G.predecessors(t):
-        print n
-        pathlist[i].append(n)
-        i += 1
-        print pathlist
-        print 'mmkmk'
+        k +=1
+        print k
         if n is j:
-            found = True
-            print'hej'
-            return
-        elif n is s:
+            pathlist[k][i].append(n)
             break
-        else:
-            print'Hej'
+        elif nodes[n] is 'white':
+            nodes[n] = 'red'
             findpath(G,s,n,j)
+            pathlist[i].append(n)
+        else:
+            return
+    nodes[t] = 'blue'
+
 
     '''def BFS(G,s):
     queue = []
@@ -195,7 +165,6 @@ class SensitiveSanityCheck(unittest.TestCase):
         H = self.G.copy()
         # compute max flow
         flow_g, F_g = max_flow(self.G, s, t)
-        print route_search(self.G, s, t)
         # find a sensitive edge
         u,v = sensitive(self.G, s, t, F_g)
         # is u a node in G?
