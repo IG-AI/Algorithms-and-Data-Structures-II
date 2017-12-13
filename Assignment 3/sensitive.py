@@ -51,7 +51,7 @@ def breadth_first_search(G, start, t):
 
         
     routelist = [[]]
-    return route(t, start, routelist, 0, 0)"""
+    return route(t, start, routelist, 0, 0)
 
 def route_search(G, s, t):
     predlist = [[]]
@@ -73,7 +73,7 @@ def route(node, t, predlist, routelist, n):
         return routelist
     
 
-"""
+
 F is represented in python as a dictionary of dictionaries;
 i.e., given two nodes u and v,
 the computed flow from u to v is given by F[u][v].
@@ -88,6 +88,7 @@ def sensitive(G, s, t, F):
     global path
     global pathlist
     global found
+    global first
     mincutedges = []
     found = False
     path = []
@@ -103,32 +104,30 @@ def sensitive(G, s, t, F):
     nx.draw_networkx_edges(G,pos)
     nx.draw_networkx_labels(G,pos)
     nx.draw_networkx_edge_labels(G,pos)
+    capacity=nx.get_edge_attributes(G,'capacity')
+    print capacity
     for j in range(len(mincut)):
-        print pathlist
-        findpath(G,s,t,j)
+        findpath(G,s,t,j,capacity)
     return pathlist
 
-def findpath(G,s,t,j):
-    global found
+def findpath(G,s,t,j,capacity):
     i = 0
-    print 'yeah'
     if found is True:
         return
+    m = t
     for n in G.predecessors(t):
-        print n
-        pathlist[i].append(n)
+        print (n,m)
+        pathlist[i].append(G.get_edge_data(n,m))
         i += 1
+        m = n
         print pathlist
         print 'mmkmk'
         if n is j:
-            found = True
-            print'hej'
             return
         elif n is s:
             break
         else:
-            print'Hej'
-            findpath(G,s,n,j)
+            findpath(G,s,n,j,capacity)
 
     '''def BFS(G,s):
     queue = []
@@ -195,7 +194,6 @@ class SensitiveSanityCheck(unittest.TestCase):
         H = self.G.copy()
         # compute max flow
         flow_g, F_g = max_flow(self.G, s, t)
-        print route_search(self.G, s, t)
         # find a sensitive edge
         u,v = sensitive(self.G, s, t, F_g)
         # is u a node in G?
