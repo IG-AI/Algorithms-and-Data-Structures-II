@@ -74,7 +74,7 @@ def route(node, t, predlist, routelist, n):
 """
     
 
-
+"""
 F is represented in python as a dictionary of dictionaries;
 i.e., given two nodes u and v,
 the computed flow from u to v is given by F[u][v].
@@ -102,7 +102,8 @@ def sensitive(G, s, t, F):
             mincut.append(u)
             mincutedges.append(G[u][v])
     print mincutedges
-    pathlist = [[[] for k in range(len(mincut))] for n in range(len(mincut))]
+    pathlist = [[[] for j in range(len(mincut))] for n in range(len(mincut))]
+    print pathlist
     pos = nx.spring_layout(G)
     nx.draw_networkx_nodes(G,pos)
     nx.draw_networkx_edges(G,pos)
@@ -117,56 +118,30 @@ def sensitive(G, s, t, F):
         nodes[s] = 'blue'
         findpath(G,s,t,mincut[j])
         i += 1
+        k = 0
+        
     print pathlist
     return pathlist
 
-def findpath(G,s,t,j):
-    global found
-    global k
-    nodes[t] = 'red'
-    capacity=nx.get_edge_attributes(G,'capacity')
-    print capacity
-    for j in range(len(mincut)):
-        findpath(G,s,t,j,capacity)
-    return pathlist
 
-def findpath(G,s,t,j,capacity):
-    i = 0
-    if found is True:
-        return
-    m = t
+def findpath(G,s,t,j):
+    nodes[t] = 'red'
     for n in G.predecessors(t):
-        k +=1
-        print k
+        k += 1
         if n is j:
+            print n
+            print k
             pathlist[k][i].append(n)
             break
         elif nodes[n] is 'white':
             nodes[n] = 'red'
-            findpath(G,s,n,j)
-            pathlist[i].append(n)
+            findpath(G,s,n,j)    
+            pathlist[k][i].append(n)        
         else:
+            k = 0
             return
+    k = 0
     nodes[t] = 'blue'
-"""
-def findpath(G,s,t,j,capacity):
-    i = 0
-    if found is True:
-        return
-    m = t
-    for n in G.predecessors(t):
-        print (n,m)
-        pathlist[i].append(G.get_edge_data(n,m))
-        i += 1
-        m = n
-        print pathlist
-        print 'mmkmk'
-        if n is j:
-            return
-        elif n is s:
-            break
-        else:
-            findpath(G,s,n,j,capacity)
 
     '''def BFS(G,s):
     queue = []
@@ -182,7 +157,6 @@ def findpath(G,s,t,j,capacity):
                 queue.append(n)
         nodes[u] = 'blue'''
         
-
 
 class SensitiveSanityCheck(unittest.TestCase):
     """
