@@ -31,54 +31,12 @@ try:
 except ImportError:
     HAVE_PLT = False
 
-
-"""
-def breadth_first_search(G, start, t):
-    visited = deque()
-    start.setPred(None)
-    set_node_attributes(G, 'Color', 'White')
-    attribute = set_node_attribute(G, 'Color')
-
-    visited.append(start)
-    while visted.size() > 0:
-        current = visited.pop()
-        for n in current.allneighbors(G, n):
-            if attribute[n] == 'White':
-                attribute[n] = 'Grey'
-                n.parent.add(current)
-                current.append(n)
-        attribute[n] = 'Black'
-
-        
-    routelist = [[]]
-    return route(t, start, routelist, 0, 0)
-
-def route_search(G, s, t):
-    predlist = [[]]
-    for n in G:
-        predlist.append(G.predecessors(n))
-    routelist = [[]]
-    return route(s, t, predlist, routelist, 0)
-
-def route(node, t, predlist, routelist, n):
-    if node in mincut:
-        return routelist
-    if predlist[n].size() == 1:
-            routelist[n] = predlist[0]
-            route(routelist[n], t, predlist, routelist, n)
-    else:
-        for n in predlist:
-                routelist[n][m] = v
-                route(n, t, routelist, n+1)
-        return routelist
-"""
-    
-
 """
 F is represented in python as a dictionary of dictionaries;
 i.e., given two nodes u and v,
 the computed flow from u to v is given by F[u][v].
 """
+
 def sensitive(G, s, t, F):
     """
     Sig:   graph G(V,E), int, int, int[0..|V|-1, 0..|V|-1] ==> int, int
@@ -86,77 +44,48 @@ def sensitive(G, s, t, F):
     Post:   
     Ex:    sensitive(G,0,5,F) ==> (1, 3)
     """
-    global path
-    global pathlist
-    global nodes
-    global i
-    i = 0
-    global k
-    k = 0
     mincutedges = []
-    found = False
-    path = []
     mincut = []
+    capacity = nx.get_edge_attributes(G,'capacity')
+    maxflow = 0
+    for n in G.predecessors(t):
+        maxflow += F[n][t]
     for u,v in G.edges():
         if G[u][v]['capacity'] == F[u][v]:
-            mincut.append(u)
-            mincutedges.append(G[u][v])
-    print mincutedges
-    pathlist = [[[] for j in range(len(mincut))] for n in range(len(mincut))]
-    print pathlist
-    pos = nx.spring_layout(G)
+            mincut.append((u,v))
+    for i in mincut:
+        capacity[i] -= 1
+        if check_maxflow(G,i,t,capacity,F) < maxflow:
+            return i
+        else:
+            capacity[i] += 1
+    '''pos = nx.spring_layout(G)
     nx.draw_networkx_nodes(G,pos)
     nx.draw_networkx_edges(G,pos)
     nx.draw_networkx_labels(G,pos)
-    nx.draw_networkx_edge_labels(G,pos)
+    nx.draw_networkx_edge_labels(G,pos)'''
+    return None, None
 
-    print mincut
-    for j in range(len(mincut)):
-        found = False
-        nx.set_node_attributes(G,'color','white')
-        nodes = nx.get_node_attributes(G,'color')
-        nodes[s] = 'blue'
-        findpath(G,s,t,mincut[j])
-        i += 1
-        k = 0
-        
-    print pathlist
-    return pathlist
-
-
-def findpath(G,s,t,j):
-    nodes[t] = 'red'
-    for n in G.predecessors(t):
-        k += 1
-        if n is j:
-            print n
-            print k
-            pathlist[k][i].append(n)
-            break
-        elif nodes[n] is 'white':
-            nodes[n] = 'red'
-            findpath(G,s,n,j)    
-            pathlist[k][i].append(n)        
-        else:
-            k = 0
-            return
-    k = 0
-    nodes[t] = 'blue'
-
-    '''def BFS(G,s):
-    queue = []
-    queue.append(s)
-    set.node.attributes(G,'color','white')
-    nodes = get.node.attributes(G,'color')
-    nodes[s] = 'red'
-    while queue != []:
+def check_maxflow(G,i,t,capacity,F):
+    queue = deque([])
+    queue.append(i[1])
+    nx.set_node_attributes(G,'color','white')
+    nodes = nx.get_node_attributes(G,'color')
+    while queue != deque([]):
         u = queue.pop()
-        for n in G.neighbors(u):
-            if nodes[n] == 'white':
+        nodes[u] = 'red'
+        for n in G.successors(u):
+            if nodes[n] is 'white' and F[u][n] != 0:
                 nodes[n] = 'red'
-                queue.append(n)
-        nodes[u] = 'blue'''
+                queue.appendleft(n)
+                F[u][n] -= 1
+    flow = 0
+    for n in G.predecessors(t):
+        flow += F[n][t]
+    return flow
+
         
+
 
 class SensitiveSanityCheck(unittest.TestCase):
     """
@@ -217,14 +146,13 @@ class SensitiveSanityCheck(unittest.TestCase):
         H[u][v]["capacity"] = H[u][v]["capacity"] - 1
         # recompute max flow
         flow_h, F_h = max_flow(H, s, t)
-        '''if draw:
-            self.draw_graph(H, u, v, flow_g, F_g, flow_h, F_h)'''
+        if draw:
+            self.draw_graph(H, u, v, flow_g, F_g, flow_h, F_h)
         # is the new max flow lower than the old max flow?
         self.assertLess(
             flow_h,
             flow_g,
             "Returned non-sensitive edge ({},{})".format(u,v))
-    
 
     def test_sanity(self):
         """Sanity check"""
