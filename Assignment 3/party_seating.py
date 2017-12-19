@@ -7,6 +7,12 @@ Team Number:
 Student Names:
 '''
 import unittest
+import networkx as nx
+try:
+    import matplotlib.pyplot as plt
+    HAVE_PLT = True
+except ImportError:
+    HAVE_PLT = False
 
 # If your solution needs a queue, you can use this one:
 from collections import deque
@@ -18,7 +24,57 @@ def party(known):
     Post:
     Ex:     [[1,2],[0],[0]] ==> True, [0], [1,2]
     """
-    return False, [], []
+    global nodes
+    G=nx.Graph()
+    for i in range(len(known)):
+        G.add_node(i)
+    for i in range(len(known)):
+        for j in range(len(known[i])):
+            G.add_edge(i,known[i][j])
+    pos = nx.spring_layout(G)
+    nx.draw_networkx_nodes(G,pos)
+    nx.draw_networkx_edges(G,pos)
+    nx.draw_networkx_labels(G,pos)
+    plt.show()
+    nx.set_node_attributes(G,'color','white')
+    nodes = nx.get_node_attributes(G,'color')
+    bol = BFS_color(G)
+    table1 = []
+    table2 = []
+    if bol is True:
+        for i in range(len(nodes)):
+            if nodes[i] is 'red':
+                table1.append(i)
+            else:
+                table2.append(i)
+    print table1
+    print table2
+    print bol
+    return bol, table1, table2
+
+def BFS_color(G):
+    queue = []
+    for s in G.nodes():
+        if nodes[s] is 'white':
+            queue.append(s)
+            nodes[s] = 'red'
+        print nodes
+        while queue != []:
+            u = queue.pop()
+            for n in G.neighbors(u):
+                print u
+                print n
+                if nodes[n] == 'white' and nodes[u] == 'red':
+                    nodes[n] = 'blue'
+                    queue.append(n)
+                elif nodes[n] == 'white' and nodes[u] == 'blue':
+                    nodes[n] = 'red'
+                    queue.append(n)
+                elif nodes[n] == 'blue' and nodes[u] == 'blue':
+                    return False
+                elif nodes[n] == 'red' and nodes[u] == 'red':
+                    return False
+    return True
 
 
 class PartySeatingTest(unittest.TestCase):
@@ -30,7 +86,7 @@ class PartySeatingTest(unittest.TestCase):
 
         A minimal test case.
         """
-        K = [[1,2],[0],[0]]
+        K = [[11, 12], [], [], [], [], [], [], [], [], [], [], [0], [0]]
         (found, A, B) = party(K)
         self.assertEqual(
             len(A) + len(B),
