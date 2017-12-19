@@ -3,8 +3,8 @@
 '''
 Assignment 3: Controlling Maximum Flow
 
-Team Number: 
-Student Names: 
+Team Number: 13
+Student Names: Daniel Ågstrand, Linnea Andersson
 '''
 
 import unittest
@@ -40,47 +40,54 @@ the computed flow from u to v is given by F[u][v].
 def sensitive(G, s, t, F):
     """
     Sig:   graph G(V,E), int, int, int[0..|V|-1, 0..|V|-1] ==> int, int
-    Pre:    
-    Post:   
+    Pre:   None 
+    Post:  Returns sensitive node 
     Ex:    sensitive(G,0,5,F) ==> (1, 3)
     """
-    mincutedges = []
     mincut = []
     capacity = nx.get_edge_attributes(G,'capacity')
     maxflow = 0
     for n in G.predecessors(t):
+        #Variant: G.predecessors(t) - n
         maxflow += F[n][t]
     for u,v in G.edges():
+        #Variant: G.edges() - u,v
         if G[u][v]['capacity'] == F[u][v]:
             mincut.append((u,v))
     for i in mincut:
+        #Variant: mincut - i
         capacity[i] -= 1
         if check_maxflow(G,i,t,capacity,F) < maxflow:
             return i
         else:
             capacity[i] += 1
-    '''pos = nx.spring_layout(G)
-    nx.draw_networkx_nodes(G,pos)
-    nx.draw_networkx_edges(G,pos)
-    nx.draw_networkx_labels(G,pos)
-    nx.draw_networkx_edge_labels(G,pos)'''
+
     return None, None
 
 def check_maxflow(G,i,t,capacity,F):
+    """
+    Sig:   graph G(V,E), node i, node t, capacity list, int[0..|V|-1, 0..|V|-1] ==> int   Pre:   None 
+    Pre:   capacity cannot be empty 
+    Post:  Returns new max flow
+    Ex:    check_maxflow(G,i,t,capacity,F) ==> 3
+    """
     queue = deque([])
     queue.append(i[1])
     nx.set_node_attributes(G,'color','white')
     nodes = nx.get_node_attributes(G,'color')
     while queue != deque([]):
+        #Variant: queue - u
         u = queue.pop()
         nodes[u] = 'red'
         for n in G.successors(u):
+            #Variant: G.successors(u) - n
             if nodes[n] is 'white' and F[u][n] != 0:
                 nodes[n] = 'red'
                 queue.appendleft(n)
                 F[u][n] -= 1
     flow = 0
     for n in G.predecessors(t):
+        #Variant: G.predecessors(t) - n
         flow += F[n][t]
     return flow
 

@@ -3,8 +3,8 @@
 '''
 Assignment 3: Party seating problem
 
-Team Number:
-Student Names:
+Team Number: 13
+Student Names: Daniel Ågstrand, Linnea Andersson
 '''
 import unittest
 import networkx as nx
@@ -20,16 +20,21 @@ from collections import deque
 def party(known):
     """
     Sig:    int[1..m, 1..n] ==> boolean, int[1..j], int[1..k]
-    Pre:
-    Post:
+    Pre:    None
+    Post:   True if there exists seating arrangement and
+            two arrays that represent seating arrangement,
+            otherwise fasle and two empty lists
     Ex:     [[1,2],[0],[0]] ==> True, [0], [1,2]
     """
     global nodes
     G=nx.Graph()
     for i in range(len(known)):
+        #Variant: len(known) - i
         G.add_node(i)
     for i in range(len(known)):
+        #Variant: len(known) - i
         for j in range(len(known[i])):
+            #Variant: len(known[i]) - j
             G.add_edge(i,known[i][j])
     pos = nx.spring_layout(G)
     nx.draw_networkx_nodes(G,pos)
@@ -43,6 +48,7 @@ def party(known):
     table2 = []
     if bol is True:
         for i in range(len(nodes)):
+            #Variant: len(nodes) - i
             if nodes[i] is 'red':
                 table1.append(i)
             else:
@@ -53,15 +59,23 @@ def party(known):
     return bol, table1, table2
 
 def BFS_color(G):
+    """
+    Sig:    graph G(V,E) ==> boolean
+    Pre:    None
+    Post:   True if graph is bipartite, otherwise false
+    """
     queue = []
     for s in G.nodes():
+        #Variant: G.nodes() - s
         if nodes[s] is 'white':
             queue.append(s)
             nodes[s] = 'red'
         print nodes
         while queue != []:
+            #Variant: queue 
             u = queue.pop()
             for n in G.neighbors(u):
+                #Variant: G.neighbors(u) - n 
                 print u
                 print n
                 if nodes[n] == 'white' and nodes[u] == 'red':
